@@ -1,27 +1,24 @@
 var ModbusRTU = require("modbus-serial")
 var client = new ModbusRTU();
 
-const IP = ""
-const PORT = 502
-
-let value = 0
-
-client.connectTCP(IP, { port: PORT });
-client.setID(1);
-
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on('connection', ws => {
     ws.on('message', data => {
-        const register = JSON.parse(data)
-        switch (register.option) {
+        const slave = JSON.parse(data)
+        switch (slave.option) {
+            case 'connect':
+                client.connectTCP(slave.host, { port: parseInt(slave.port) });
+                client.setID(1);
+                ws.send(JSON.stringify(slave))
+                break
             case 'read':
-                readRegister(register, ws)
+                readRegister(slave, ws)
                 break
             case 'write':
-                writeRegister(register, ws)
+                writeRegister(slave, ws)
                 break
         }
     })
