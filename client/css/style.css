@@ -1,0 +1,10 @@
+.container{
+    border: 1px solid blue;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.btn{
+    width: 20vw;
+}
