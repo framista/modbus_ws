@@ -9,6 +9,7 @@ Aplication to write/read register using modbus-TCP
     * webpack
     * babel
 * CSS3
+    * bootstrap
 * HTML5
 
 ## Setup
@@ -25,7 +26,7 @@ $ cd server/
 # Install dependencies 
 $ npm install
 # Run the server
-$ node index
+$ node server
 
 # Go into the client
 $ cd client/
