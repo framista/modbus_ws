@@ -26,7 +26,7 @@ $ cd server/
 # Install dependencies 
 $ npm install
 # Run the server
-$ node server
+$ node src/server
 
 # Go into the client
 $ cd client/

@@ -10,12 +10,19 @@ wss.on('connection', ws => {
         const slave = JSON.parse(data)
         switch (slave.option) {
             case 'connect':
+                try{
                 client.connectTCP(slave.host, { port: parseInt(slave.port) });
                 client.setID(1);
                 ws.send(JSON.stringify(slave))
+                }catch{
+                    console.log("ERROR jakis")
+                }
                 break
             case 'read':
                 readRegister(slave, ws)
+                break
+            case 'scan':
+                scanRegister(slave, ws)
                 break
             case 'write':
                 writeRegister(slave, ws)
@@ -27,6 +34,14 @@ wss.on('connection', ws => {
 function readRegister(register, ws) {
     address = parseInt(register.address)
     client.readHoldingRegisters(address, 1).then(data => {
+        register.value = data.data;
+        ws.send(JSON.stringify(register))
+    })
+}
+
+function scanRegister(register, ws) {
+    address = parseInt(register.address)
+    client.readCoils(address, 1).then(data => {
         register.value = data.data;
         ws.send(JSON.stringify(register))
     })

@@ -1,18 +1,25 @@
 import Register from './modbus/register'
 import Connection from './modbus/connection'
 
+const connectionModbusBtn = document.getElementById("modbusConnectBtn")
 const host = document.getElementById("host")
 const port = document.getElementById("port")
-const readRegisterBtn = document.getElementById("readRegister")
-const writeRegisterBtn = document.getElementById("writeRegister")
-const connectionModbusBtn = document.getElementById("modbusConnectBtn")
+const connectAlert = document.getElementById("alertConnect")
 
+const readRegisterBtn = document.getElementById("readRegister")
 const addressReadIpt = document.getElementById("addressRead")
 const valueReadIpt = document.getElementById("valueRead")
+
+const writeRegisterBtn = document.getElementById("writeRegister")
 const addressWriteIpt = document.getElementById("addressWrite")
 const valueWriteIpt = document.getElementById("valueWrite")
-const alertWrite = document.getElementById("alertWrite")
-const alertConnect = document.getElementById("alertConnect")
+const writeAlert = document.getElementById("alertWrite")
+
+const startScanRegisterBtn = document.getElementById("startScanRegister")
+const stopScanRegisterBtn = document.getElementById("stopScanRegister")
+const addressScanIpt = document.getElementById("addressScan")
+const valueScanIpt = document.getElementById("valueScan")
+let scanRegisterInterval 
 
 const connection = new WebSocket('ws://localhost:8080')
 
@@ -24,15 +31,17 @@ connection.addEventListener('message', e => {
     const data = JSON.parse(e.data)
     switch (data.option) {
         case 'connect':
-            alertConnect.style.display = "block"
-            setTimeout(() => alertConnect.style.display = "none", 8000)
+            connectAlert.style.display = "block"
+            setTimeout(() => connectAlert.style.display = "none", 8000)
             break
         case 'read':
             valueReadIpt.value = data.value;
             break
+        case 'scan':
+            valueScanIpt.value = data.value[0];
         case 'write':
-            alertWrite.style.display = "block"
-            setTimeout(() => alertWrite.style.display = "none", 8000)
+            writeAlert.style.display = "block"
+            setTimeout(() => writeAlert.style.display = "none", 8000)
             break
     }
 })
@@ -54,6 +63,18 @@ function createModbusConnection(host, port){
 readRegisterBtn.addEventListener('click', e => {
     e.preventDefault();
     sendRegister(addressReadIpt.value, 0, 'read')
+})
+
+startScanRegisterBtn.addEventListener('click', e=> {
+    e.preventDefault();
+    scanRegisterInterval = setInterval ( () => {
+        sendRegister(addressScanIpt.value, 0, 'scan')
+    }, 1000);
+})
+
+stopScanRegisterBtn.addEventListener('click', e => {
+    e.preventDefault();
+    clearInterval(scanRegisterInterval)
 })
 
 writeRegisterBtn.addEventListener('click', e => {
