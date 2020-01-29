@@ -1,7 +1,7 @@
 # modbus_ws
 
 ## General info
-Aplication to write/read register using modbus-TCP
+Aplication to write/read register and scan coil using modbus-TCP
 ## Technologies
 * JavaScript
     * modbus-serial
@@ -38,3 +38,4 @@ $ npm install
 ## Features
 * communication using websocket
 * read/write register using modbus
+* scan coil
