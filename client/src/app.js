@@ -39,6 +39,7 @@ connection.addEventListener('message', e => {
             break
         case 'scan':
             valueScanIpt.value = data.value[0];
+            break
         case 'write':
             writeAlert.style.display = "block"
             setTimeout(() => writeAlert.style.display = "none", 8000)

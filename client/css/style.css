@@ -1,10 +1,15 @@
-.container{
+.container-fluid {
+    margin-top: 10px;
+}
+
+.container {
     border: 1px solid blue;
     padding: 10px;
-    margin: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
     border-radius: 10px;
 }
 
-.btn{
-    width: 20vw;
+.btn {
+    width: 40%;
 }

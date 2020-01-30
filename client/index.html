@@ -14,73 +14,76 @@
 
 <body>
 
-    <div class="container">
-        <div style="display: none" id="alertConnect" class="alert alert-success">
-            Connected <strong>successfully</strong>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="container col-md-5">
+                <div style="display: none" id="alertConnect" class="alert alert-success">
+                    Connected <strong>successfully</strong>
+                </div>
+                <h1>Options</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="host">Host</label>
+                        <input type="text" id="host" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="port">Port</label>
+                        <input type="number" id="port" min=500 max=700 value=502 class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="modbusConnectBtn">CONNECT</button>
+                </form>
+            </div>
+
+            <div class="container col-md-5">
+                <div style="display: none" id="alertWrite" class="alert alert-success">
+                    Register was <strong>successfully</strong> written
+                </div>
+                <h1>Write register</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="addressWrite">Address</label>
+                        <input type="number" id="addressWrite" value=1001 min=1000 max=1200 class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="valueWrite">Value</label>
+                        <input type="number" id="valueWrite" min=10 max=99 class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="writeRegister">WRITE</button>
+                </form>
+            </div>
+
+            <div class="container col-md-5">
+                <h1>Read register</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="addressRead">Address</label>
+                        <input type="number" id="addressRead" value=1001 min=1000 max=1200 class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="valueRead">Value</label>
+                        <input type="number" id="valueRead" disabled="disabled" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="readRegister">READ</button>
+                </form>
+            </div>
+
+            <div class="container col-md-5">
+                <h1>Scan register</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="addressScan">Address</label>
+                        <input type="number" id="addressScan" value=1 min=1 max=30 class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="valueScan">Value</label>
+                        <input type="text" id="valueScan" disabled="disabled" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-success" id="startScanRegister">START</button>
+                    <button type="submit" class="btn btn-danger" id="stopScanRegister">STOP</button>
+                </form>
+            </div>
         </div>
-        <h1>Options</h1>
-        <form>
-            <div class="form-group">
-                <label for="host">Host</label>
-                <input type="text" id="host" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="port">Port</label>
-                <input type="number" id="port" min=500 max=700 value=502 class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary" id="modbusConnectBtn">CONNECT</button>
-        </form>
     </div>
-
-    <div class="container">
-        <div style="display: none" id="alertWrite" class="alert alert-success">
-            Register was <strong>successfully</strong> written
-        </div>
-        <h1>Write register</h1>
-        <form>
-            <div class="form-group">
-                <label for="addressWrite">Address</label>
-                <input type="number" id="addressWrite" value=1001 min=1000 max=1200 class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="valueWrite">Value</label>
-                <input type="number" id="valueWrite" min=10 max=99 class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary" id="writeRegister">WRITE</button>
-        </form>
-    </div>
-
-    <div class="container">
-        <h1>Read register</h1>
-        <form>
-            <div class="form-group">
-                <label for="addressRead">Address</label>
-                <input type="number" id="addressRead" value=1001 min=1000 max=1200 class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="valueRead">Value</label>
-                <input type="number" id="valueRead" disabled="disabled" class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary" id="readRegister">READ</button>
-        </form>
-    </div>
-
-    <div class="container">
-        <h1>Scan register</h1>
-        <form>
-            <div class="form-group">
-                <label for="addressScan">Address</label>
-                <input type="number" id="addressScan" value=1 min=1 max=30 class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="valueScan">Value</label>
-                <input type="text" id="valueScan" disabled="disabled" class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-success" id="startScanRegister">START</button>
-            <button type="submit" class="btn btn-danger" id="stopScanRegister">STOP</button>
-        </form>
-    </div>
-
     <script src="dist/js/bundle.min.js" defer></script>
 </body>
 
