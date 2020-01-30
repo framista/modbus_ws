@@ -8,45 +8,55 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 
     <div class="container-fluid">
+        <div style="display: none" id="alertNotConnect" class="alert alert-danger">
+            There is <strong>not connection</strong> with modbus
+        </div>
+        <div style="display: none" id="alertConnect" class="alert alert-success">
+            Connected <strong>successfully</strong>
+        </div>
+        <div style="display: none" id="alertWrite" class="alert alert-success">
+            Register was <strong>successfully</strong> written
+        </div>
         <div class="row">
             <div class="container col-md-5">
-                <div style="display: none" id="alertConnect" class="alert alert-success">
-                    Connected <strong>successfully</strong>
-                </div>
                 <h1>Options</h1>
-                <form>
+                <form class="needs-validation" novalidate>
                     <div class="form-group">
                         <label for="host">Host</label>
-                        <input type="text" id="host" class="form-control" />
+                        <input  type="text" id="host" class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <div class="form-group">
                         <label for="port">Port</label>
                         <input type="number" id="port" min=500 max=700 value=502 class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <button type="submit" class="btn btn-primary" id="modbusConnectBtn">CONNECT</button>
+                    <button type="submit" class="btn btn-secondary" id="modbusDisconnectBtn">DISCONNECT</button>
                 </form>
             </div>
 
             <div class="container col-md-5">
-                <div style="display: none" id="alertWrite" class="alert alert-success">
-                    Register was <strong>successfully</strong> written
-                </div>
                 <h1>Write register</h1>
                 <form>
                     <div class="form-group">
                         <label for="addressWrite">Address</label>
                         <input type="number" id="addressWrite" value=1001 min=1000 max=1200 class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <div class="form-group">
                         <label for="valueWrite">Value</label>
                         <input type="number" id="valueWrite" min=10 max=99 class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <button type="submit" class="btn btn-primary" id="writeRegister">WRITE</button>
                 </form>
@@ -58,6 +68,7 @@
                     <div class="form-group">
                         <label for="addressRead">Address</label>
                         <input type="number" id="addressRead" value=1001 min=1000 max=1200 class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <div class="form-group">
                         <label for="valueRead">Value</label>
@@ -73,6 +84,7 @@
                     <div class="form-group">
                         <label for="addressScan">Address</label>
                         <input type="number" id="addressScan" value=1 min=1 max=30 class="form-control" />
+                        <div class="invalid-feedback">Please fill out this field in correct way.</div>
                     </div>
                     <div class="form-group">
                         <label for="valueScan">Value</label>
@@ -84,6 +96,7 @@
             </div>
         </div>
     </div>
+
     <script src="dist/js/bundle.min.js" defer></script>
 </body>
 

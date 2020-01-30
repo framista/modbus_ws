@@ -2,9 +2,11 @@ import Register from './modbus/register'
 import Connection from './modbus/connection'
 
 const connectionModbusBtn = document.getElementById("modbusConnectBtn")
+const disconnectionModbusBtn = document.getElementById("modbusDisconnectBtn")
 const host = document.getElementById("host")
 const port = document.getElementById("port")
 const connectAlert = document.getElementById("alertConnect")
+const notConnectAlert = document.getElementById("alertNotConnect")
 
 const readRegisterBtn = document.getElementById("readRegister")
 const addressReadIpt = document.getElementById("addressRead")
@@ -19,7 +21,7 @@ const startScanRegisterBtn = document.getElementById("startScanRegister")
 const stopScanRegisterBtn = document.getElementById("stopScanRegister")
 const addressScanIpt = document.getElementById("addressScan")
 const valueScanIpt = document.getElementById("valueScan")
-let scanRegisterInterval 
+let scanRegisterInterval
 
 const connection = new WebSocket('ws://localhost:8080')
 
@@ -30,8 +32,12 @@ connection.addEventListener('open', () => {
 connection.addEventListener('message', e => {
     const data = JSON.parse(e.data)
     switch (data.option) {
+        case 'notconnect':
+            notConnectAlert.style.display = "block"
+            break
         case 'connect':
             connectAlert.style.display = "block"
+            notConnectAlert.style.display = "none"
             setTimeout(() => connectAlert.style.display = "none", 8000)
             break
         case 'read':
@@ -49,28 +55,32 @@ connection.addEventListener('message', e => {
 
 connectionModbusBtn.addEventListener('click', e => {
     e.preventDefault()
-    createModbusConnection(host.value, port.value)
+    if (validateHost(host) && validateInputNumbers(port)) {
+        createModbusConnection(host.value, port.value)
+    }
 })
 
-function createModbusConnection(host, port){
-    if (connection.readyState === WebSocket.OPEN) {
-        const connectionModbus = new Connection(host, port, 'connect')
-        connection.send(JSON.stringify(connectionModbus))
-    } else {
-        throw 'Not connected'
-    }
-}
+disconnectionModbusBtn.addEventListener('click', e => {
+    e.preventDefault()
+    clearInterval(scanRegisterInterval)
+    connection.send(JSON.stringify({ option: "disconnect" }))
+})
+
 
 readRegisterBtn.addEventListener('click', e => {
     e.preventDefault();
-    sendRegister(addressReadIpt.value, 0, 'read')
+    if (validateInputNumbers(addressReadIpt)) {
+        sendRegister(addressReadIpt.value, 0, 'read')
+    }
 })
 
-startScanRegisterBtn.addEventListener('click', e=> {
+startScanRegisterBtn.addEventListener('click', e => {
     e.preventDefault();
-    scanRegisterInterval = setInterval ( () => {
-        sendRegister(addressScanIpt.value, 0, 'scan')
-    }, 1000);
+    if (validateInputNumbers(addressScanIpt)) {
+        scanRegisterInterval = setInterval(() => {
+            sendRegister(addressScanIpt.value, 0, 'scan')
+        }, 1000);
+    }
 })
 
 stopScanRegisterBtn.addEventListener('click', e => {
@@ -80,14 +90,45 @@ stopScanRegisterBtn.addEventListener('click', e => {
 
 writeRegisterBtn.addEventListener('click', e => {
     e.preventDefault();
-    sendRegister(addressWriteIpt.value, valueWriteIpt.value, 'write')
+    if (validateInputNumbers(addressWriteIpt) && validateInputNumbers(valueWriteIpt)) {
+        sendRegister(addressWriteIpt.value, valueWriteIpt.value, 'write')
+    }
 })
+
+function createModbusConnection(host, port) {
+    if (connection.readyState === WebSocket.OPEN) {
+        const connectionModbus = new Connection(host, port, 'connect')
+        connection.send(JSON.stringify(connectionModbus))
+    } else {
+        alert('Problem with server. Refresh site')
+        throw 'Not connected'
+    }
+}
 
 function sendRegister(address, value, option) {
     if (connection.readyState === WebSocket.OPEN) {
         const register = new Register(address, value, option)
         connection.send(JSON.stringify(register))
     } else {
+        alert('Problem with server. Refresh site')
         throw 'Not connected'
     }
+}
+
+function validateHost(host) {
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(host.value)) {
+        host.nextElementSibling.style.display = "none";
+        return true
+    }
+    host.nextElementSibling.style.display = "block";
+    return false
+}
+
+function validateInputNumbers(input) {
+    if (/^\d+$/.test(input.value)) {
+        input.nextElementSibling.style.display = "none"
+        return true
+    }
+    input.nextElementSibling.style.display = "block"
+    return false
 }
