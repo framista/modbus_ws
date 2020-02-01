@@ -1,19 +1,28 @@
-var ModbusRTU = require("modbus-serial")
-var client = new ModbusRTU();
-
 const WebSocket = require('ws');
+var ModbusRTU = require("modbus-serial")
+
+const clients = [];
+const hosts = [];
+var clientIndex = 0;
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on('connection', ws => {
     ws.on('message', data => {
         const slave = JSON.parse(data)
+
+        clientIndex = hosts.indexOf(slave.host)
+        if (clientIndex === -1) {
+            hosts.push(slave.host);
+            clients.push(new ModbusRTU());
+            clientIndex = clients.length - 1;
+        }
+
         switch (slave.option) {
             case 'connect':
                 connectModbus(slave, ws);
                 break
             case 'disconnect':
-                console.log("rozlaczone")
                 closeModbus(slave, ws);
                 break
             case 'read':
@@ -28,21 +37,22 @@ wss.on('connection', ws => {
                 slave.option = isModbusConnect(slave)
                 writeRegister(slave, ws)
                 break
+
         }
     })
 })
 
 function isModbusConnect(slave) {
-    return client.isOpen ? slave.option : 'notconnect'
+    return clients[clientIndex].isOpen ? slave.option : 'notconnect'
 }
 
 function connectModbus(slave, ws) {
-    if (client.isOpen) {
-        closeModbus(slave, ws)
+    if (clients[clientIndex].isOpen && clientIndex != clients.length - 1) {
+        clients[clientIndex].close();
     }
     try {
-        client.connectTCP(slave.host, { port: parseInt(slave.port) });
-        client.setID(1);
+        clients[clientIndex].connectTCP(slave.host, { port: parseInt(slave.port) });
+        clients[clientIndex].setID(1);
         setTimeout(() => {
             slave.option = isModbusConnect(slave)
             ws.send(JSON.stringify(slave))
@@ -53,7 +63,7 @@ function connectModbus(slave, ws) {
 }
 
 function closeModbus(slave, ws) {
-    client.close();
+    clients[clientIndex].close();
     slave.option = 'notconnect'
     ws.send(JSON.stringify(slave))
 }
@@ -63,7 +73,7 @@ function readRegister(register, ws) {
         ws.send(JSON.stringify(register))
     } else {
         address = parseInt(register.address)
-        client.readHoldingRegisters(address, 1).then(data => {
+        clients[clientIndex].readHoldingRegisters(address, 1).then(data => {
             register.value = data.data;
             ws.send(JSON.stringify(register))
         })
@@ -75,7 +85,7 @@ function scanRegister(register, ws) {
         ws.send(JSON.stringify(register))
     } else {
         address = parseInt(register.address)
-        client.readCoils(address, 1).then(data => {
+        client[clientIndex].readCoils(address, 1).then(data => {
             register.value = data.data;
             ws.send(JSON.stringify(register))
         })
@@ -88,7 +98,7 @@ function writeRegister(register, ws) {
     } else {
         address = parseInt(register.address)
         value = parseInt(register.value)
-        client.writeRegister(address, value).then(() => {
+        clients[clientIndex].writeRegister(address, value).then(() => {
             ws.send(JSON.stringify(register))
         })
     }
