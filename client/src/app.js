@@ -1,5 +1,6 @@
 import Register from './modbus/register'
 import Connection from './modbus/connection'
+import {validateHost, validateInputNumbers} from './validation'
 
 const connectionModbusBtn = document.getElementById("modbusConnectBtn")
 const disconnectionModbusBtn = document.getElementById("modbusDisconnectBtn")
@@ -31,13 +32,13 @@ connection.addEventListener('open', () => {
 
 connection.addEventListener('message', e => {
     const data = JSON.parse(e.data)
+    notConnectAlert.style.display = "none"
     switch (data.option) {
         case 'notconnect':
             notConnectAlert.style.display = "block"
             break
         case 'connect':
             connectAlert.style.display = "block"
-            notConnectAlert.style.display = "none"
             setTimeout(() => connectAlert.style.display = "none", 8000)
             break
         case 'read':
@@ -63,7 +64,7 @@ connectionModbusBtn.addEventListener('click', e => {
 disconnectionModbusBtn.addEventListener('click', e => {
     e.preventDefault()
     clearInterval(scanRegisterInterval)
-    connection.send(JSON.stringify({ option: "disconnect" }))
+    connection.send(JSON.stringify({ host: host.value, option: "disconnect" }))
 })
 
 
@@ -107,7 +108,7 @@ function createModbusConnection(host, port) {
 
 function sendRegister(address, value, option) {
     if (connection.readyState === WebSocket.OPEN) {
-        const register = new Register(address, value, option)
+        const register = new Register(host.value, address, value, option)
         connection.send(JSON.stringify(register))
     } else {
         alert('Problem with server. Refresh site')
@@ -115,20 +116,3 @@ function sendRegister(address, value, option) {
     }
 }
 
-function validateHost(host) {
-    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(host.value)) {
-        host.nextElementSibling.style.display = "none";
-        return true
-    }
-    host.nextElementSibling.style.display = "block";
-    return false
-}
-
-function validateInputNumbers(input) {
-    if (/^\d+$/.test(input.value)) {
-        input.nextElementSibling.style.display = "none"
-        return true
-    }
-    input.nextElementSibling.style.display = "block"
-    return false
-}
